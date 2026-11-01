@@ -1,12 +1,21 @@
 import { getStoreProfile } from '../../lib/firebase';
 
 export default async function StorePage({ params }) {
-  const store = await getStoreProfile(params.slug);
+  let store = null;
+  
+  try {
+    if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      store = await getStoreProfile(params.slug);
+    }
+  } catch (error) {
+    console.log("Firebase belum diaktifkan:", error);
+  }
 
   if (!store) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-400 flex items-center justify-center p-6">
-        Website Toko Tidak Ditemukan.
+      <div className="min-h-screen bg-slate-950 text-slate-400 flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-xl font-bold text-slate-200">Toko Tidak Ditemukan / Belum Aktif</h1>
+        <p className="text-xs text-slate-500 mt-2">Pastikan API Key Firebase sudah terpasang di Vercel.</p>
       </div>
     );
   }
