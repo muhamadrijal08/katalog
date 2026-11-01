@@ -1,4 +1,4 @@
-import { getStoreProfile } from '@/lib/firebase';
+import { getStoreProfile } from '../../lib/firebase';
 
 export default async function StorePage({ params }) {
   const store = await getStoreProfile(params.slug);
