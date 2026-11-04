@@ -36,18 +36,15 @@ export default function Home() {
     bgTheme: 'from-[#0d1117] via-[#161b22] to-[#0d1117]',
     statsProducts: '1000+',
     statsLearners: '500+',
-    // Konten Menu 1: Baca Dulu
     bacaTitle: 'Sabar Adalah Kunci Sukses',
     bacaSubtitle: 'ISTIQOMAH & FOKUS',
     bacaContent: 'Perjalanan bisnis digital butuh proses. Terus upgrade ilmu, ikuti arahan mentor, dan iringi dengan ikhtiar terbaik.',
-    // Konten Menu 2: Materi
     materi1Title: 'Panduan Mulai',
     materi1Desc: 'Modul e-learning lengkap dasar bisnis',
     materi2Title: 'Tips Promosi',
     materi2Desc: 'Aset promosi siap pakai & strategi cuan'
   });
 
-  // State Input Produk Baru
   const [newProduct, setNewProduct] = useState({
     title: '',
     url: '',
@@ -56,7 +53,6 @@ export default function Home() {
     badge: 'Populer'
   });
 
-  // Data List Produk
   const [products, setProducts] = useState([
     { id: 1, title: '100+ Template Canva IG', category: 'Template', iconColor: 'bg-amber-500', badge: 'Hot', url: '#' },
     { id: 2, title: 'E-Book Panduan Bisnis Digital', category: 'Ebook', iconColor: 'bg-rose-500', badge: 'New', url: '#' },
@@ -64,7 +60,6 @@ export default function Home() {
     { id: 4, title: '500+ Prompt ChatGPT Marketing', category: 'Template', iconColor: 'bg-purple-500', badge: 'Bonus', url: '#' }
   ]);
 
-  // Load Data dari Firestore
   useEffect(() => {
     async function loadData() {
       try {
@@ -82,7 +77,6 @@ export default function Home() {
     loadData();
   }, []);
 
-  // Simpan Data ke Firestore
   const handleSaveData = async () => {
     setIsSaving(true);
     try {
@@ -96,19 +90,48 @@ export default function Home() {
       setActiveTab('preview');
     } catch (err) {
       console.error("Error Detail Firebase:", err);
-      alert(`❌ Gagal menyimpan data: ${err.message || 'Cek izin Firestore Rules'}`);
+      alert(`❌ Gagal menyimpan data: ${err.message || 'Cek ukuran gambar atau koneksi'}`);
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Handler Upload Gambar dari Galeri HP/Komputer (Base64)
+  // Kompresi sederhana via Canvas agar ukuran base64 tidak terlalu besar / melampaui limit Firestore
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setStoreData({ ...storeData, logoUrl: reader.result });
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 200;
+          const MAX_HEIGHT = 200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Kompres ke format JPEG kualitas 0.7 agar ukuran filenya kecil
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          setStoreData({ ...storeData, logoUrl: dataUrl });
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -139,11 +162,9 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen bg-gradient-to-b ${storeData.bgTheme} text-slate-100 flex flex-col font-sans relative overflow-x-hidden pb-24 transition-all duration-500`}>
-      {/* Background Aurora Ornaments */}
       <div className="fixed top-[-10%] left-[-20%] w-[400px] h-[400px] bg-rose-600/20 rounded-full blur-[100px] pointer-events-none" />
       <div className="fixed top-[40%] right-[-20%] w-[400px] h-[400px] bg-cyan-600/20 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Top Bar Navigation */}
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[#161b22]/80 border-b border-slate-800/80 px-4 py-3 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
@@ -182,14 +203,9 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Container */}
       <main className="max-w-md mx-auto w-full px-4 pt-4 flex-1">
-        
-        {/* ================= PANEL EDIT ================= */}
         {activeTab === 'edit' && (
           <div className="space-y-4 pb-12">
-            
-            {/* 1. Identitas & Foto Profil */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                 <Store className="w-4 h-4" /> 1. Identitas & Foto Profil Toko
@@ -205,7 +221,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400">Foto Profil / Logo (Upload dari HP / Komputer)</label>
+                  <label className="text-slate-400">Foto Profil / Logo (Upload Otomatis Kompres)</label>
                   <div className="flex items-center gap-3 mt-1">
                     <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all">
                       <Upload className="w-4 h-4" /> Pilih File Gambar
@@ -245,7 +261,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 2. Pengaturan Tema & Background */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
                 <Palette className="w-4 h-4" /> 2. Pengaturan Background & Tema
@@ -265,7 +280,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 3. Kustomisasi Menu 1: Baca Dulu */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                 <BookOpen className="w-4 h-4" /> 3. Edit Menu "Baca Dulu"
@@ -301,7 +315,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 4. Kustomisasi Menu 2: Materi */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-purple-400 uppercase tracking-wider flex items-center gap-2">
                 <FileText className="w-4 h-4" /> 4. Edit Menu "Materi"
@@ -370,7 +383,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 5. Kustomisasi Menu 3: Produk */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4" /> 5. Edit Menu "Produk" (Katalog)
@@ -442,7 +454,6 @@ export default function Home() {
                 </button>
               </form>
 
-              {/* List Produk Aktif */}
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1 pt-2 border-t border-slate-800">
                 {products.map((p) => (
                   <div key={p.id} className="flex items-center justify-between bg-slate-950 p-2 rounded-xl text-xs">
@@ -462,14 +473,11 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
           </div>
         )}
 
-        {/* ================= PANEL PREVIEW ================= */}
         {activeTab === 'preview' && (
           <div className="space-y-4">
-            {/* Header Profil Toko */}
             <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800 rounded-3xl p-5 backdrop-blur-xl shadow-2xl flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-500 to-cyan-500 p-0.5 shadow-xl shrink-0 overflow-hidden">
                 <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
@@ -486,7 +494,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* KONTEN MENU 1: BACA DULU */}
             {bottomNav === 'baca' && (
               <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-2 shadow-xl animate-fadeIn">
                 <h3 className="text-xs font-bold text-amber-400 flex items-center gap-2">
@@ -499,7 +506,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* KONTEN MENU 2: MATERI */}
             {bottomNav === 'materi' && (
               <div className="grid grid-cols-2 gap-3 animate-fadeIn">
                 <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-lg">
@@ -515,7 +521,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* KONTEN MENU 3: PRODUK */}
             {bottomNav === 'produk' && (
               <>
                 <div className="grid grid-cols-2 gap-3">
@@ -599,7 +604,6 @@ export default function Home() {
               </>
             )}
 
-            {/* WhatsApp CTA */}
             <div className="bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between shadow-xl">
               <div>
                 <p className="text-xs font-bold text-emerald-400">Punya Pertanyaan?</p>
@@ -618,7 +622,6 @@ export default function Home() {
         )}
       </main>
 
-      {/* Floating Bottom Navigation Bar */}
       <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 max-w-xs w-[90%] bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-full px-4 py-2 flex items-center justify-around shadow-2xl z-50 text-xs">
         <button 
           onClick={() => { setBottomNav('baca'); setActiveTab('preview'); }}
