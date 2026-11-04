@@ -1,233 +1,203 @@
-'use client';
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KatalogCraft SaaS - Modern App UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#0d1117] text-slate-100 font-sans min-h-screen pb-24 relative overflow-x-hidden">
 
-import React, { useState, useMemo } from 'react';
-import { 
-  Store, BookOpen, Gamepad2, Gift, MessageCircle, Search, 
-  Plus, Trash2, ExternalLink, Check, Sparkles, Smartphone, 
-  LayoutDashboard, Eye, Save, Palette, Layers, Share2, HelpCircle, FileText
-} from 'lucide-react';
+    <!-- Aurora Background Glow -->
+    <div class="fixed top-[-10%] left-[-20%] w-[400px] h-[400px] bg-rose-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="fixed top-[40%] right-[-20%] w-[400px] h-[400px] bg-cyan-600/20 rounded-full blur-[100px] pointer-events-none"></div>
 
-const PRESETS = {
-  digital: {
-    store_name: "Digital Treasury Hub",
-    store_tagline: "Pusat Aset Digital, Template Canva & E-Book Premium Siap Pakai",
-    whatsapp_number: "6281234567890",
-    logo_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",
-    theme_color: "emerald",
-    products: [
-      { id: '1', title: "100+ Template Canva Feed IG", subtitle: "Desain Promosi Siap Edit", category: "Produk Digital", url: "https://drive.google.com", icon: "FileText" },
-      { id: '2', title: "E-Book Panduan Bisnis Digital", subtitle: "Format PDF + Lisensi PLR", category: "Modul & E-Book", url: "https://drive.google.com", icon: "BookOpen" },
-      { id: '3', title: "Game Edukasi Matematika", subtitle: "Berbasis Web Interaktif Anak", category: "Game Interaktif", url: "https://example.com/game", icon: "Gamepad2" },
-      { id: '4', title: "Bonus 500+ Prompt ChatGPT", subtitle: "Aset Copywriting & Marketing", category: "Bonus Premium", url: "https://drive.google.com", icon: "Gift" }
-    ]
-  },
-  edukasi: {
-    store_name: "Dunia Edukasi Anak",
-    store_tagline: "Kumpulan Worksheet, Flashcard & Game Pembelajaran Interaktif",
-    whatsapp_number: "6289876543210",
-    logo_url: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=150",
-    theme_color: "blue",
-    products: [
-      { id: '101', title: "Worksheet Mewarnai PDF", subtitle: "50 Lembar Siap Cetak A4", category: "Modul & E-Book", url: "#", icon: "FileText" },
-      { id: '102', title: "Flashcard Hijaiyah & English", subtitle: "Kartu Cetak Bergambar HD", category: "Produk Digital", url: "#", icon: "BookOpen" },
-      { id: '103', title: "Game Kuis Tebak Bergambar", subtitle: "Main Langsung di HP/Laptop", category: "Game Interaktif", url: "#", icon: "Gamepad2" }
-    ]
-  }
-};
-
-const THEMES = {
-  emerald: {
-    name: "Emerald Green",
-    primaryBg: "bg-emerald-600 hover:bg-emerald-500",
-    primaryText: "text-emerald-400",
-    badgeBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-    border: "border-emerald-500",
-    gradient: "from-emerald-900/60 to-slate-900",
-    buttonTheme: "bg-emerald-600 hover:bg-emerald-500 text-white"
-  },
-  blue: {
-    name: "Royal Blue",
-    primaryBg: "bg-blue-600 hover:bg-blue-500",
-    primaryText: "text-blue-400",
-    badgeBg: "bg-blue-500/10 text-blue-400 border-blue-500/30",
-    border: "border-blue-500",
-    gradient: "from-blue-900/60 to-slate-900",
-    buttonTheme: "bg-blue-600 hover:bg-blue-500 text-white"
-  },
-  purple: {
-    name: "Cyber Purple",
-    primaryBg: "bg-purple-600 hover:bg-purple-500",
-    primaryText: "text-purple-400",
-    badgeBg: "bg-purple-500/10 text-purple-400 border-purple-500/30",
-    border: "border-purple-500",
-    gradient: "from-purple-900/60 to-slate-900",
-    buttonTheme: "bg-purple-600 hover:bg-purple-500 text-white"
-  }
-};
-
-export default function App() {
-  const [viewMode, setViewMode] = useState('split');
-  const [toastMessage, setToastMessage] = useState(null);
-  const [storeData, setStoreData] = useState(PRESETS.digital);
-  const [selectedCategory, setSelectedCategory] = useState('Semua');
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const [newProduct, setNewProduct] = useState({
-    title: '',
-    subtitle: '',
-    category: 'Produk Digital',
-    url: '',
-    icon: 'FileText'
-  });
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const loadPreset = (presetKey) => {
-    if (PRESETS[presetKey]) {
-      setStoreData(PRESETS[presetKey]);
-      showToast(`Preset "${PRESETS[presetKey].store_name}" berhasil dimuat!`);
-    }
-  };
-
-  const handleAddProduct = (e) => {
-    e.preventDefault();
-    if (!newProduct.title || !newProduct.url) {
-      showToast("Judul dan Link URL wajib diisi!");
-      return;
-    }
-    const item = { ...newProduct, id: Date.now().toString() };
-    setStoreData(prev => ({ ...prev, products: [item, ...prev.products] }));
-    setNewProduct({ title: '', subtitle: '', category: 'Produk Digital', url: '', icon: 'FileText' });
-    showToast("Produk baru berhasil ditambahkan!");
-  };
-
-  const handleDeleteProduct = (id) => {
-    setStoreData(prev => ({ ...prev, products: prev.products.filter(p => p.id !== id) }));
-    showToast("Produk berhasil dihapus!");
-  };
-
-  const filteredProducts = useMemo(() => {
-    return storeData.products.filter(p => {
-      const matchCategory = selectedCategory === 'Semua' || p.category === selectedCategory;
-      const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          p.subtitle.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchCategory && matchSearch;
-    });
-  }, [storeData.products, selectedCategory, searchQuery]);
-
-  const currentTheme = THEMES[storeData.theme_color] || THEMES.emerald;
-
-  const renderIcon = (iconName) => {
-    switch (iconName) {
-      case 'BookOpen': return <BookOpen className="w-5 h-5" />;
-      case 'Gamepad2': return <Gamepad2 className="w-5 h-5" />;
-      case 'Gift': return <Gift className="w-5 h-5" />;
-      case 'Sparkles': return <Sparkles className="w-5 h-5" />;
-      default: return <FileText className="w-5 h-5" />;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col">
-      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-emerald-500/20">
-            <Store className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-bold text-base tracking-tight">KatalogCraft SaaS</span>
-              <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-semibold">v2.4 Pro</span>
+    <!-- Top Bar -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#161b22]/80 border-b border-slate-800/80 px-4 py-3 flex items-center justify-between shadow-lg">
+        <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <i data-lucide="store" class="w-5 h-5 text-slate-950"></i>
             </div>
-            <p className="text-xs text-slate-400">Website Builder Instant Katalog Digital</p>
-          </div>
-        </div>
-
-        <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700">
-          <button onClick={() => setViewMode('dashboard')} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${viewMode === 'dashboard' ? 'bg-slate-700 text-emerald-400' : 'text-slate-400'}`}>Dashboard Edit</button>
-          <button onClick={() => setViewMode('split')} className={`hidden md:block px-3 py-1.5 rounded-lg text-xs font-medium ${viewMode === 'split' ? 'bg-slate-700 text-emerald-400' : 'text-slate-400'}`}>Split View</button>
-          <button onClick={() => setViewMode('preview')} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${viewMode === 'preview' ? 'bg-slate-700 text-emerald-400' : 'text-slate-400'}`}>Live Preview</button>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <button onClick={() => showToast("Perubahan tersimpan!")} className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-            <Save className="w-3.5 h-3.5" /> Simpan
-          </button>
-        </div>
-      </header>
-
-      {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-slate-800 text-slate-100 border border-emerald-500/40 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs font-medium">{toastMessage}</span>
-        </div>
-      )}
-
-      <div className="flex-1 flex overflow-hidden">
-        {(viewMode === 'dashboard' || viewMode === 'split') && (
-          <div className={`flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-950 border-r border-slate-800 ${viewMode === 'split' ? 'max-w-xl' : 'w-full max-w-4xl mx-auto'}`}>
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-              <h2 className="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-                <Store className="w-4 h-4 text-emerald-400" /> Identitas Toko
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">Nama Toko</label>
-                  <input type="text" value={storeData.store_name} onChange={(e) => setStoreData({...storeData, store_name: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100" />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-400 mb-1">WhatsApp</label>
-                  <input type="text" value={storeData.whatsapp_number} onChange={(e) => setStoreData({...storeData, whatsapp_number: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Slogan</label>
-                <input type="text" value={storeData.store_tagline} onChange={(e) => setStoreData({...storeData, store_tagline: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100" />
-              </div>
+            <div>
+                <h1 class="font-bold text-sm bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                    KatalogCraft <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Pro UI</span>
+                </h1>
             </div>
-
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-              <h2 className="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-                <Plus className="w-4 h-4 text-emerald-400" /> Tambah Produk
-              </h2>
-              <form onSubmit={handleAddProduct} className="space-y-3">
-                <input type="text" value={newProduct.title} onChange={(e) => setNewProduct({...newProduct, title: e.target.value})} placeholder="Judul Produk" className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100" />
-                <input type="url" value={newProduct.url} onChange={(e) => setNewProduct({...newProduct, url: e.target.value})} placeholder="Link URL Produk" className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100" />
-                <button type="submit" className="w-full bg-emerald-600 text-white text-xs py-2.5 rounded-xl font-semibold">Tambah ke Katalog</button>
-              </form>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex text-xs">
+                <button onclick="switchTab('edit')" id="btn-edit" class="px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white">Edit</button>
+                <button onclick="switchTab('preview')" id="btn-preview" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-emerald-500 text-slate-950 font-semibold shadow-md">Preview</button>
             </div>
-          </div>
-        )}
+            <button onclick="saveData()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-2 rounded-xl text-xs font-bold shadow-lg shadow-emerald-500/20 active:scale-95">Simpan</button>
+        </div>
+    </header>
 
-        {(viewMode === 'preview' || viewMode === 'split') && (
-          <div className="flex-1 bg-slate-950 p-4 overflow-y-auto flex flex-col items-center">
-            <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-[32px] overflow-hidden shadow-2xl p-4 min-h-[600px] flex flex-col">
-              <header className="text-center pt-4">
-                <h1 className="text-lg font-extrabold text-white">{storeData.store_name}</h1>
-                <p className="text-xs text-slate-400 mt-1">{storeData.store_tagline}</p>
-              </header>
-
-              <div className="space-y-2 pt-6 flex-1">
-                {filteredProducts.map((item) => (
-                  <a key={item.id} href={item.url} target="_blank" rel="noreferrer" className="flex items-center justify-between bg-slate-800 p-3 rounded-2xl border border-slate-700">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 rounded-xl bg-slate-900 text-emerald-400">{renderIcon(item.icon)}</div>
-                      <div>
-                        <h4 className="text-xs font-semibold text-slate-200">{item.title}</h4>
-                        <p className="text-[10px] text-slate-400">{item.subtitle}</p>
-                      </div>
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto w-full px-4 pt-4">
+        
+        <!-- PANEL EDIT -->
+        <div id="panel-edit" class="hidden space-y-4">
+            <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
+                <h2 class="text-xs font-semibold text-emerald-400 mb-3 uppercase tracking-wider">Identitas Toko</h2>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="text-slate-400">Nama Toko</label>
+                        <input type="text" id="input-name" class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500" value="Digital Treasury Hub">
                     </div>
-                    <span className="text-[10px] bg-emerald-600 text-white px-2 py-1 rounded-lg font-bold">LIHAT</span>
-                  </a>
-                ))}
-              </div>
+                    <div>
+                        <label class="text-slate-400">Nomor WhatsApp</label>
+                        <input type="text" id="input-wa" class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500" value="6281234567890">
+                    </div>
+                    <div>
+                        <label class="text-slate-400">Slogan / Deskripsi</label>
+                        <textarea id="input-slogan" rows="2" class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500">Pusat Aset Digital & Template Premium</textarea>
+                    </div>
+                </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+        </div>
+
+        <!-- PANEL PREVIEW (APP UI) -->
+        <div id="panel-preview" class="space-y-4">
+            <!-- Header Profil Toko -->
+            <div class="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800 rounded-3xl p-5 backdrop-blur-xl shadow-2xl flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-500 to-cyan-500 p-0.5 shadow-xl">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                        <i data-lucide="store" class="w-7 h-7 text-emerald-400"></i>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h2 id="view-name" class="text-lg font-extrabold text-white truncate">Digital Treasury Hub</h2>
+                    <p id="view-slogan" class="text-xs text-slate-400 leading-relaxed line-clamp-2 mt-0.5">Pusat Aset Digital & Template Premium</p>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] text-slate-400">Produk Digital</p>
+                        <p class="text-xl font-extrabold text-white mt-0.5">1000+</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] text-slate-400">Materi Belajar</p>
+                        <p class="text-xl font-extrabold text-white mt-0.5">500+</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                <input type="text" placeholder="Cari template, ebook, ecourse..." class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+            </div>
+
+            <!-- Grid Produk 3 Kolom Modern -->
+            <div class="grid grid-cols-3 gap-2.5">
+                <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-2.5 flex flex-col justify-between relative shadow-lg">
+                    <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-rose-500/20 text-rose-400 border border-rose-500/30">Hot</span>
+                    <div>
+                        <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 mb-2 shadow-md">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-[11px] font-bold text-slate-200 line-clamp-2">Template Canva IG</h4>
+                    </div>
+                    <a href="#" class="mt-3 w-full py-1.5 rounded-xl bg-slate-800 text-emerald-400 text-[10px] font-bold text-center block border border-slate-700">LIHAT</a>
+                </div>
+
+                <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-2.5 flex flex-col justify-between relative shadow-lg">
+                    <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">New</span>
+                    <div>
+                        <div class="w-9 h-9 rounded-xl bg-rose-500 flex items-center justify-center text-slate-950 mb-2 shadow-md">
+                            <i data-lucide="book-open" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-[11px] font-bold text-slate-200 line-clamp-2">E-Book Bisnis</h4>
+                    </div>
+                    <a href="#" class="mt-3 w-full py-1.5 rounded-xl bg-slate-800 text-emerald-400 text-[10px] font-bold text-center block border border-slate-700">LIHAT</a>
+                </div>
+
+                <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-2.5 flex flex-col justify-between relative shadow-lg">
+                    <span class="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Pro</span>
+                    <div>
+                        <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center text-slate-950 mb-2 shadow-md">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-[11px] font-bold text-slate-200 line-clamp-2">Game Edukasi</h4>
+                    </div>
+                    <a href="#" class="mt-3 w-full py-1.5 rounded-xl bg-slate-800 text-emerald-400 text-[10px] font-bold text-center block border border-slate-700">LIHAT</a>
+                </div>
+            </div>
+
+            <!-- WhatsApp Direct CTA -->
+            <div class="bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between shadow-xl">
+                <div>
+                    <p class="text-xs font-bold text-emerald-400">Punya Pertanyaan?</p>
+                    <p class="text-[10px] text-slate-400">Chat langsung via WhatsApp</p>
+                </div>
+                <a id="wa-link" href="https://wa.me/6281234567890" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Hubungi
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-3 left-1/2 -translate-x-1/2 max-w-xs w-[90%] bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-full px-4 py-2 flex items-center justify-around shadow-2xl z-50 text-xs">
+        <button class="flex flex-col items-center gap-1 text-cyan-400">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span class="text-[10px]">Baca Dulu</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-white">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span class="text-[10px]">Materi</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-white">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            <span class="text-[10px]">Produk</span>
+        </button>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+
+        function switchTab(tab) {
+            const editPanel = document.getElementById('panel-edit');
+            const previewPanel = document.getElementById('panel-preview');
+            const btnEdit = document.getElementById('btn-edit');
+            const btnPreview = document.getElementById('btn-preview');
+
+            if (tab === 'edit') {
+                editPanel.classList.remove('hidden');
+                previewPanel.classList.add('hidden');
+                btnEdit.className = "px-3 py-1.5 rounded-lg font-medium transition-all bg-emerald-500 text-slate-950 font-semibold shadow-md";
+                btnPreview.className = "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
+            } else {
+                editPanel.classList.add('hidden');
+                previewPanel.classList.remove('hidden');
+                btnPreview.className = "px-3 py-1.5 rounded-lg font-medium transition-all bg-emerald-500 text-slate-950 font-semibold shadow-md";
+                btnEdit.className = "px-3 py-1.5 rounded-lg font-medium transition-all text-slate-400 hover:text-white";
+                
+                // Update preview text
+                document.getElementById('view-name').innerText = document.getElementById('input-name').value;
+                document.getElementById('view-slogan').innerText = document.getElementById('input-slogan').value;
+                const wa = document.getElementById('input-wa').value;
+                document.getElementById('wa-link').href = `https://wa.me/${wa}`;
+            }
+        }
+
+        function saveData() {
+            switchTab('preview');
+            alert('✅ Perubahan berhasil diterapkan pada pratinjau!');
+        }
+    </script>
+</body>
+</html>
