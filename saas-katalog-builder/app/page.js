@@ -11,12 +11,8 @@ import {
   Save, 
   Eye, 
   Edit3,
-  FileText,
-  TrendingUp,
   Trash2,
-  Upload,
-  Palette,
-  ExternalLink
+  Palette
 } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -27,7 +23,6 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('semua');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Data Toko ala Digital Treasury
   const [storeData, setStoreData] = useState({
     name: 'Digital Treasury',
     whatsapp: '6281533331953',
@@ -39,7 +34,6 @@ export default function Home() {
     statsModules: '29',
   });
 
-  // Database Produk Lengkap
   const [products, setProducts] = useState([
     { id: 101, title: 'Tasbih Digital', category: 'islami', icon: 'fa-fingerprint', url: 'https://sites.google.com/view/tasbih-mizyan/home' },
     { id: 102, title: 'Waktu Sholat', category: 'islami', icon: 'fa-clock', url: 'https://equran.id/shalat' },
@@ -51,30 +45,22 @@ export default function Home() {
     { id: 108, title: 'Kisah Nabi', category: 'islami', icon: 'fa-scroll', url: 'https://sites.google.com/view/kisah-nabi/home' },
     { id: 109, title: 'Tulis Al-Quran', category: 'islami', icon: 'fa-pen-nib', url: 'https://sites.google.com/view/mizyan-tulis-quran/home' },
     { id: 110, title: 'Ebook Tajwid', category: 'ebook', icon: 'fa-book-quran', url: 'https://drive.google.com/file/d/1EFXRmfKhrGReJ4uj9HtQxIu1mX2pxMHl/view?usp=drivesdk' },
-    
-    // Anak-anak
     { id: 201, title: 'Video Edukasi', category: 'ecourse', icon: 'fa-film', url: 'https://drive.google.com/drive/folders/1Rf2aXQuhSy20wbutc08tjyiRgfzJPpzL' },
     { id: 202, title: 'Worksheet Anak', category: 'worksheet', icon: 'fa-file-pen', url: 'https://www.digitalprodukno1seindonesia.my.id/worksheet' },
     { id: 203, title: 'Flash Card', category: 'worksheet', icon: 'fa-layer-group', url: 'https://www.digitalprodukno1seindonesia.my.id/flash-card' },
     { id: 204, title: 'Quiz Anak SD', category: 'game', icon: 'fa-graduation-cap', url: 'https://www.digitalprodukno1seindonesia.my.id/quiz' },
-    
-    // Game
     { id: 301, title: 'Asah Otak', category: 'game', icon: 'fa-puzzle-piece', url: 'https://www.digitalprodukno1seindonesia.my.id/game-edukasi' },
     { id: 302, title: 'Quiz Islami', category: 'game', icon: 'fa-star-and-crescent', url: 'https://sites.google.com/view/game-islami-cilik/home' },
     { id: 303, title: 'Quiz MTK', category: 'game', icon: 'fa-calculator', url: 'https://sites.google.com/view/game-edukasi-islami-mizyan/home' },
     { id: 304, title: 'Ular Tangga', category: 'game', icon: 'fa-dice', url: 'https://sites.google.com/view/game-ular-tanggaa/home' },
     { id: 305, title: 'Tetris Mobile', category: 'game', icon: 'fa-cubes', url: 'https://sites.google.com/view/tetris-3d/home' },
-
-    // Template & Tools
     { id: 501, title: '48 Buku Cerita B.Inggris', category: 'ebook', icon: 'fa-book-open', url: 'https://drive.google.com/file/d/13J6yOoiUiIwp7sK2r-13zI36zKQuV9_9/view' },
     { id: 502, title: '20+ Finance Social Media', category: 'template', icon: 'fa-chart-line', url: 'https://www.canva.com/design/DAGSSKhRum0/sesUclbzYyTSUDrktkYrHQ/view' },
-    { id: 503, title: '70+ Worksheet Baca', category: 'worksheet', icon: 'fa-spell-check', url: 'https://drive.google.com/drive/folders/1hg_-b2xUUqvXdoXQ9MbM3XoxeX5l1HDj' },
-    { id: 504, title: '1000 Ide Produk Digital', category: 'ebook', icon: 'fa-lightbulb', url: 'https://drive.google.com/file/d/1sMifdrNxyrhe6LAdsHoP1fVVNtHwsLC4/view' }
+    { id: 503, title: '70+ Worksheet Baca', category: 'worksheet', icon: 'fa-spell-check', url: 'https://drive.google.com/drive/folders/1hg_-b2xUUqvXdoXQ9MbM3XoxeX5l1HDj' }
   ]);
 
   const [newProduct, setNewProduct] = useState({ title: '', url: '', category: 'template', icon: 'fa-box' });
 
-  // Load Firestore Data
   useEffect(() => {
     async function loadData() {
       try {
@@ -135,16 +121,25 @@ export default function Home() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0B132B] text-slate-100 flex flex-col font-sans relative pb-20">
+    <div className="min-h-screen bg-[#070b19] text-slate-100 flex flex-col items-center font-sans relative overflow-x-hidden pb-24">
       
+      {/* FontAwesome CDN untuk ikon gaya Digital Treasury */}
+      <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+      </head>
+
+      {/* Background Aurora / Glow Ornaments */}
+      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[120px] pointer-events-none" />
+
       {/* Top Header Mode Toggle (Edit / Preview) */}
-      <div className="bg-[#1C2541] border-b border-slate-800 px-4 py-2.5 flex items-center justify-between sticky top-0 z-50 shadow-md">
+      <div className="w-full bg-[#0B132B]/90 backdrop-blur-md border-b border-slate-800 px-4 py-2.5 flex items-center justify-between sticky top-0 z-50 shadow-lg">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
           <span className="text-xs font-bold tracking-wider text-slate-200">Digital Treasury Dashboard</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="bg-[#0B132B] p-1 rounded-xl border border-slate-700 flex text-xs">
+          <div className="bg-[#1C2541] p-1 rounded-xl border border-slate-700 flex text-xs">
             <button 
               onClick={() => setActiveTab('preview')}
               className={`px-3 py-1 rounded-lg font-medium transition-all ${activeTab === 'preview' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-300'}`}
@@ -170,12 +165,13 @@ export default function Home() {
         </div>
       </div>
 
-      <main className="max-w-md mx-auto w-full px-4 pt-4 flex-1 space-y-4">
+      {/* Container Utama Berukuran HP (Max-width 440px) di Tengah */}
+      <main className="max-w-[440px] w-full px-4 pt-4 flex-1 space-y-4 relative z-10">
 
         {/* ================= PANEL EDIT ================= */}
         {activeTab === 'edit' && (
           <div className="space-y-4 pb-10">
-            <div className="bg-[#1C2541] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+            <div className="bg-[#111827] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Pengaturan Identitas Toko</h2>
               <div className="space-y-2 text-xs">
                 <div>
@@ -184,7 +180,7 @@ export default function Home() {
                     type="text"
                     value={storeData.name}
                     onChange={(e) => setStoreData({...storeData, name: e.target.value})}
-                    className="w-full mt-1 bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
+                    className="w-full mt-1 bg-[#1F2937] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
                   />
                 </div>
                 <div>
@@ -193,7 +189,7 @@ export default function Home() {
                     type="text"
                     value={storeData.logoUrl}
                     onChange={(e) => setStoreData({...storeData, logoUrl: e.target.value})}
-                    className="w-full mt-1 bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
+                    className="w-full mt-1 bg-[#1F2937] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
                   />
                 </div>
                 <div>
@@ -202,7 +198,7 @@ export default function Home() {
                     type="text"
                     value={storeData.whatsapp}
                     onChange={(e) => setStoreData({...storeData, whatsapp: e.target.value})}
-                    className="w-full mt-1 bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
+                    className="w-full mt-1 bg-[#1F2937] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
                   />
                 </div>
                 <div>
@@ -210,15 +206,14 @@ export default function Home() {
                   <textarea 
                     value={storeData.slogan}
                     onChange={(e) => setStoreData({...storeData, slogan: e.target.value})}
-                    className="w-full mt-1 bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
+                    className="w-full mt-1 bg-[#1F2937] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
                     rows={2}
                   />
                 </div>
               </div>
             </div>
 
-            {/* Tambah Produk Instan */}
-            <div className="bg-[#1C2541] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+            <div className="bg-[#111827] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Tambah Produk / Link Baru</h2>
               <form onSubmit={handleAddProduct} className="space-y-2.5 text-xs">
                 <input 
@@ -226,32 +221,41 @@ export default function Home() {
                   placeholder="Judul Produk..."
                   value={newProduct.title}
                   onChange={(e) => setNewProduct({...newProduct, title: e.target.value})}
-                  className="w-full bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
+                  className="w-full bg-[#1F2937] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
                 />
                 <input 
                   type="text"
                   placeholder="URL Tujuan (https://...)"
                   value={newProduct.url}
                   onChange={(e) => setNewProduct({...newProduct, url: e.target.value})}
-                  className="w-full bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
+                  className="w-full bg-[#1F2937] border border-slate-700 rounded-xl px-3 py-2 text-slate-200"
                 />
-                <select 
-                  value={newProduct.category}
-                  onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                  className="w-full bg-[#0B132B] border border-slate-700 rounded-xl px-3 py-2 text-slate-200 text-xs"
-                >
-                  {categories.filter(c => c.key !== 'semua').map(c => (
-                    <option key={c.key} value={c.key}>{c.label}</option>
-                  ))}
-                </select>
-                <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1">
+                <div className="grid grid-cols-2 gap-2">
+                  <select 
+                    value={newProduct.category}
+                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                    className="bg-[#1F2937] border border-slate-700 rounded-xl px-2 py-2 text-slate-200 text-xs"
+                  >
+                    {categories.filter(c => c.key !== 'semua').map(c => (
+                      <option key={c.key} value={c.key}>{c.label}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="text"
+                    placeholder="Icon FontAwesome (cth: fa-box)"
+                    value={newProduct.icon}
+                    onChange={(e) => setNewProduct({...newProduct, icon: e.target.value})}
+                    className="bg-[#1F2937] border border-slate-700 rounded-xl px-2 py-2 text-slate-200"
+                  />
+                </div>
+                <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1">
                   <Plus className="w-4 h-4" /> Tambahkan Produk
                 </button>
               </form>
 
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1 pt-2 border-t border-slate-800">
                 {products.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between bg-[#0B132B] p-2 rounded-xl text-xs">
+                  <div key={p.id} className="flex items-center justify-between bg-[#1F2937] p-2 rounded-xl text-xs">
                     <span className="font-bold text-slate-200 truncate">{p.title}</span>
                     <button onClick={() => handleDeleteProduct(p.id)} className="p-1 rounded bg-rose-500/20 text-rose-400">
                       <Trash2 className="w-3.5 h-3.5" />
@@ -267,9 +271,10 @@ export default function Home() {
         {activeTab === 'preview' && (
           <div className="space-y-4">
             
-            {/* Header Banner */}
-            <div className="bg-gradient-to-r from-[#1C2541] to-[#3A506B] border border-slate-700 rounded-3xl p-5 shadow-2xl relative overflow-hidden flex items-center justify-between">
-              <div className="flex items-center gap-3">
+            {/* Header Banner ala Digital Treasury */}
+            <div className="bg-gradient-to-r from-[#111827] via-[#1f2937] to-[#111827] border border-slate-700/80 rounded-3xl p-5 shadow-2xl relative overflow-hidden flex items-center justify-between">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+              <div className="flex items-center gap-3 relative z-10">
                 <img src={storeData.logoUrl} alt="Logo" className="w-12 h-12 rounded-full object-cover border-2 border-cyan-400 shadow-md" />
                 <div>
                   <h1 className="text-base font-extrabold text-white">{storeData.name}</h1>
@@ -279,21 +284,21 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <a href={storeData.partnerLink} target="_blank" rel="noreferrer" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-2 rounded-xl text-xs font-bold shadow-lg">
+              <a href={storeData.partnerLink} target="_blank" rel="noreferrer" className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-2 rounded-xl text-xs font-bold shadow-lg relative z-10">
                 Buat Website
               </a>
             </div>
 
-            {/* Statistik Kotak */}
+            {/* Statistik Kotak (Produk & Materi) */}
             <div className="grid grid-cols-2 gap-3">
-              <a href="https://sites.google.com/view/katalog-produk-premium/kumpulan-produk" target="_blank" rel="noreferrer" className="bg-[#1C2541] border border-slate-700/80 rounded-2xl p-4 shadow-lg hover:border-cyan-500 transition-all block">
+              <a href="https://sites.google.com/view/katalog-produk-premium/kumpulan-produk" target="_blank" rel="noreferrer" className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4 shadow-xl hover:border-cyan-500 transition-all block">
                 <div className="flex justify-between items-center text-xs text-slate-300 mb-1">
                   <span>📚 Produk Digital</span>
                   <ShoppingBag className="w-4 h-4 text-cyan-400" />
                 </div>
                 <p className="text-2xl font-black text-white">{storeData.statsProducts}+</p>
               </a>
-              <div className="bg-[#1C2541] border border-slate-700/80 rounded-2xl p-4 shadow-lg">
+              <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
                 <div className="flex justify-between items-center text-xs text-slate-300 mb-1">
                   <span>🎓 Materi Belajar</span>
                   <BookOpen className="w-4 h-4 text-emerald-400" />
@@ -302,15 +307,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Menu Navigasi Grid */}
+            {/* Menu Navigasi Utama */}
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider pt-2">Menu Navigasi Utama</h2>
             <div className="grid grid-cols-2 gap-2.5">
-              <a href="https://sites.google.com/view/katalog-produk-premium/kumpulan-produk" target="_blank" rel="noreferrer" className="bg-[#1C2541]/80 border border-slate-800 p-3.5 rounded-2xl flex flex-col gap-1 hover:border-cyan-500 transition-all">
+              <a href="https://sites.google.com/view/katalog-produk-premium/kumpulan-produk" target="_blank" rel="noreferrer" className="bg-[#111827]/80 border border-slate-800 p-3.5 rounded-2xl flex flex-col gap-1 hover:border-cyan-500 transition-all">
                 <ShoppingBag className="w-5 h-5 text-cyan-400 mb-1" />
                 <h3 className="text-xs font-bold text-white">Produk</h3>
                 <p className="text-[10px] text-slate-400">Akses Katalog File</p>
               </a>
-              <a href={`https://wa.me/${storeData.whatsapp}?text=Halo%20kak!%20Aku%20mau%20konsultasi`} target="_blank" rel="noreferrer" className="bg-[#1C2541]/80 border border-slate-800 p-3.5 rounded-2xl flex flex-col gap-1 hover:border-emerald-500 transition-all">
+              <a href={`https://wa.me/${storeData.whatsapp}?text=Halo%20kak!%20Aku%20mau%20konsultasi`} target="_blank" rel="noreferrer" className="bg-[#111827]/80 border border-slate-800 p-3.5 rounded-2xl flex flex-col gap-1 hover:border-emerald-500 transition-all">
                 <MessageCircle className="w-5 h-5 text-emerald-400 mb-1" />
                 <h3 className="text-xs font-bold text-white">Konsultasi</h3>
                 <p className="text-[10px] text-slate-400">Tanya mentor praktisi</p>
@@ -327,20 +332,20 @@ export default function Home() {
                   placeholder="Cari template, ebook, game, atau produk..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#1C2541] border border-slate-700 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-[#111827] border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 shadow-inner"
                 />
               </div>
 
-              {/* Kategori Filter */}
-              <div className="flex gap-2 overflow-x-auto pb-1 text-xs">
+              {/* Kategori Filter Bar */}
+              <div className="flex gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
                 {categories.map((cat) => (
                   <button
                     key={cat.key}
                     onClick={() => setSelectedCategory(cat.key)}
                     className={`px-3.5 py-1.5 rounded-xl whitespace-nowrap border transition-all ${
                       selectedCategory === cat.key 
-                        ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400 shadow' 
-                        : 'bg-[#1C2541] text-slate-300 border-slate-700 hover:text-white'
+                        ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400 shadow-lg' 
+                        : 'bg-[#111827] text-slate-300 border-slate-800 hover:text-white'
                     }`}
                   >
                     {cat.label}
@@ -349,24 +354,24 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Grid Kartu Produk */}
+            {/* Grid Kartu Produk Bergaya Digital Treasury (3 Kolom dengan Ikon FontAwesome) */}
             <div className="grid grid-cols-3 gap-2.5 pt-1">
               {filteredProducts.map((p) => (
                 <div 
                   key={p.id}
-                  className="bg-gradient-to-b from-[#1C2541] to-[#0B132B] border border-slate-800 rounded-2xl p-3 flex flex-col justify-between shadow-lg"
+                  className="bg-gradient-to-b from-[#111827] to-[#0d1322] border border-slate-800/80 rounded-2xl p-3 flex flex-col justify-between shadow-xl hover:border-slate-700 transition-all group"
                 >
                   <div>
-                    <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-2 shadow">
-                      <Sparkles className="w-4 h-4" />
+                    <div className="w-9 h-9 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center mb-2 shadow-md group-hover:scale-105 transition-transform">
+                      <i className={`fa-solid ${p.icon || 'fa-box'} text-sm`}></i>
                     </div>
-                    <h4 className="text-[11px] font-bold text-slate-200 line-clamp-2">{p.title}</h4>
+                    <h4 className="text-[11px] font-bold text-slate-200 line-clamp-2 leading-snug">{p.title}</h4>
                   </div>
                   <a 
                     href={p.url || '#'}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 w-full py-1.5 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 text-[10px] font-bold text-center block border border-slate-700 transition-all"
+                    className="mt-3 w-full py-1.5 rounded-xl bg-[#1F2937] hover:bg-cyan-500 hover:text-slate-950 text-cyan-400 text-[10px] font-bold text-center block border border-slate-700 transition-all shadow-sm"
                   >
                     LIHAT
                   </a>
@@ -375,7 +380,7 @@ export default function Home() {
             </div>
 
             {/* Footer WhatsApp CTA */}
-            <div className="bg-gradient-to-r from-emerald-950/60 to-[#1C2541] border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between shadow-xl mt-6">
+            <div className="bg-gradient-to-r from-emerald-950/50 via-[#111827] to-[#111827] border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between shadow-xl mt-6">
               <div>
                 <p className="text-xs font-bold text-emerald-400">Punya Pertanyaan?</p>
                 <p className="text-[10px] text-slate-400">Konsultasi langsung via WhatsApp</p>
@@ -384,7 +389,7 @@ export default function Home() {
                 href={`https://wa.me/${storeData.whatsapp}?text=Halo%20kak!%20Aku%20mau%20konsultasi`}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg"
               >
                 <MessageCircle className="w-4 h-4" /> Hubungi
               </a>
