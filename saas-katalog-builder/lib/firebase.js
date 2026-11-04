@@ -1,5 +1,5 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,16 +10,8 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+// Inisialisasi Firebase App
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const db = getFirestore(app);
 
-export async function saveStoreProfile(slug, storeData) {
-  const storeRef = doc(db, "websites", slug);
-  await setDoc(storeRef, storeData, { merge: true });
-}
-
-export async function getStoreProfile(slug) {
-  const storeRef = doc(db, "websites", slug);
-  const docSnap = await getDoc(storeRef);
-  return docSnap.exists() ? docSnap.data() : null;
-}
+export { db };
