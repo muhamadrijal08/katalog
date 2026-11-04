@@ -12,7 +12,9 @@ import {
   Eye, 
   Edit3,
   FileText,
-  TrendingUp
+  TrendingUp,
+  Trash2,
+  Image as ImageIcon
 } from 'lucide-react';
 import { db } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -24,11 +26,12 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Data Toko State
+  // Data Toko State (Lengkap dengan Logo/Gambar & Statistik)
   const [storeData, setStoreData] = useState({
     name: 'Digital Treasury Hub',
     whatsapp: '6281234567890',
     slogan: 'Pusat Aset Digital, Template Canva & E-Book Premium Siap Pakai',
+    logoUrl: '',
     statsProducts: '1000+',
     statsLearners: '500+'
   });
@@ -76,7 +79,7 @@ export default function Home() {
         storeData,
         products
       });
-      alert('✅ Data berhasil disimpan permanen!');
+      alert('✅ Semua perubahan berhasil disimpan permanen!');
       setActiveTab('preview');
     } catch (err) {
       console.error("Error menyimpan data:", err);
@@ -95,6 +98,10 @@ export default function Home() {
     };
     setProducts([...products, item]);
     setNewProduct({ title: '', url: '', category: 'Template', iconColor: 'bg-emerald-500', badge: 'Populer' });
+  };
+
+  const handleDeleteProduct = (id) => {
+    setProducts(products.filter(p => p.id !== id));
   };
 
   const categories = ['Semua', 'Template', 'Ebook', 'Ecourse'];
@@ -119,7 +126,7 @@ export default function Home() {
           </div>
           <div>
             <h1 className="font-bold text-sm bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-              KatalogCraft <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Pro UI</span>
+              KatalogCraft <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Master Control</span>
             </h1>
           </div>
         </div>
@@ -153,12 +160,14 @@ export default function Home() {
       {/* Main Container */}
       <main className="max-w-md mx-auto w-full px-4 pt-4 flex-1">
         
-        {/* PANEL EDIT */}
+        {/* ================= PANEL EDIT (KENDALI PENUH) ================= */}
         {activeTab === 'edit' && (
-          <div className="space-y-4">
-            <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
-              <h2 className="text-xs font-semibold text-emerald-400 mb-3 uppercase tracking-wider flex items-center gap-2">
-                <Store className="w-4 h-4" /> IDENTITAS TOKO
+          <div className="space-y-4 pb-10">
+            
+            {/* 1. Identitas & Visual Toko */}
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
+              <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                <Store className="w-4 h-4" /> 1. Identitas & Visual Toko
               </h2>
               <div className="space-y-3 text-xs">
                 <div>
@@ -171,7 +180,20 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400">Nomor WhatsApp (628xxx)</label>
+                  <label className="text-slate-400">URL Gambar / Logo Toko (Opsional)</label>
+                  <div className="flex gap-2 mt-1">
+                    <input 
+                      type="text"
+                      placeholder="https://example.com/logo.png"
+                      value={storeData.logoUrl}
+                      onChange={(e) => setStoreData({...storeData, logoUrl: e.target.value})}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1">Kosongkan jika ingin memakai ikon default.</p>
+                </div>
+                <div>
+                  <label className="text-slate-400">Nomor WhatsApp (Format: 628xxx)</label>
                   <input 
                     type="text"
                     value={storeData.whatsapp}
@@ -180,7 +202,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400">Slogan Toko</label>
+                  <label className="text-slate-400">Slogan / Deskripsi Toko</label>
                   <textarea 
                     value={storeData.slogan}
                     onChange={(e) => setStoreData({...storeData, slogan: e.target.value})}
@@ -191,9 +213,37 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl">
-              <h2 className="text-xs font-semibold text-emerald-400 mb-3 uppercase tracking-wider flex items-center gap-2">
-                <Plus className="w-4 h-4" /> TAMBAH PRODUK BARU
+            {/* 2. Pengaturan Statistik Header */}
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
+              <h2 className="text-xs font-semibold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" /> 2. Angka Statistik Utama
+              </h2>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <label className="text-slate-400">Statistik Produk</label>
+                  <input 
+                    type="text"
+                    value={storeData.statsProducts}
+                    onChange={(e) => setStoreData({...storeData, statsProducts: e.target.value})}
+                    className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-400">Statistik Materi</label>
+                  <input 
+                    type="text"
+                    value={storeData.statsLearners}
+                    onChange={(e) => setStoreData({...storeData, statsLearners: e.target.value})}
+                    className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Tambah Produk Baru */}
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
+              <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                <Plus className="w-4 h-4" /> 3. Tambah Item Produk
               </h2>
               <form onSubmit={handleAddProduct} className="space-y-3 text-xs">
                 <div>
@@ -207,7 +257,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400">Link URL Produk</label>
+                  <label className="text-slate-400">Link URL Tujuan (Checkout / GDrive / WA)</label>
                   <input 
                     type="text"
                     placeholder="https://..."
@@ -216,13 +266,13 @@ export default function Home() {
                     className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <div>
                     <label className="text-slate-400">Kategori</label>
                     <select 
                       value={newProduct.category}
                       onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                      className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500"
+                      className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-slate-200 focus:outline-none"
                     >
                       <option value="Template">Template</option>
                       <option value="Ebook">Ebook</option>
@@ -234,33 +284,79 @@ export default function Home() {
                     <select 
                       value={newProduct.iconColor}
                       onChange={(e) => setNewProduct({...newProduct, iconColor: e.target.value})}
-                      className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500"
+                      className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-slate-200 focus:outline-none"
                     >
                       <option value="bg-emerald-500">Hijau</option>
                       <option value="bg-amber-500">Kuning</option>
                       <option value="bg-rose-500">Merah</option>
                       <option value="bg-cyan-500">Biru</option>
+                      <option value="bg-purple-500">Ungu</option>
                     </select>
+                  </div>
+                  <div>
+                    <label className="text-slate-400">Badge Label</label>
+                    <input 
+                      type="text"
+                      placeholder="Hot / New"
+                      value={newProduct.badge}
+                      onChange={(e) => setNewProduct({...newProduct, badge: e.target.value})}
+                      className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-slate-200 focus:outline-none"
+                    />
                   </div>
                 </div>
                 <button 
                   type="submit"
                   className="w-full mt-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
                 >
-                  <Plus className="w-4 h-4" /> Tambah ke Katalog
+                  <Plus className="w-4 h-4" /> Masukkan ke Daftar Produk
                 </button>
               </form>
             </div>
+
+            {/* 4. Daftar & Kelola Produk Aktif */}
+            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
+              <h2 className="text-xs font-semibold text-rose-400 uppercase tracking-wider flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4" /> 4. Kelola Daftar Produk ({products.length})
+              </h2>
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                {products.map((p) => (
+                  <div key={p.id} className="flex items-center justify-between bg-slate-950/80 border border-slate-800/80 p-2.5 rounded-xl text-xs">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`w-7 h-7 rounded-lg ${p.iconColor} flex items-center justify-center text-slate-950 shrink-0`}>
+                        <Sparkles className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-200 truncate">{p.title}</p>
+                        <p className="text-[10px] text-slate-400">{p.category} • <span className="text-emerald-400">{p.badge}</span></p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => handleDeleteProduct(p.id)}
+                      className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-all shrink-0"
+                      title="Hapus produk"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 
-        {/* PANEL PREVIEW */}
+        {/* ================= PANEL PREVIEW (HALAMAN UTAMA) ================= */}
         {activeTab === 'preview' && (
           <div className="space-y-4">
+            {/* Header Profil Toko Dinamis */}
             <div className="bg-gradient-to-b from-slate-900/90 to-slate-950/90 border border-slate-800 rounded-3xl p-5 backdrop-blur-xl shadow-2xl flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-500 to-cyan-500 p-0.5 shadow-xl">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-500 via-purple-500 to-cyan-500 p-0.5 shadow-xl shrink-0 overflow-hidden">
                 <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                  <Store className="w-7 h-7 text-emerald-400" />
+                  {storeData.logoUrl ? (
+                    <img src={storeData.logoUrl} alt="Logo" className="w-full h-full object-cover rounded-[14px]" />
+                  ) : (
+                    <Store className="w-7 h-7 text-emerald-400" />
+                  )}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
@@ -269,26 +365,27 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Navigasi Menu Bawah (State) */}
             {bottomNav === 'baca' && (
-              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 shadow-xl">
+              <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 space-y-2 shadow-xl animate-fadeIn">
                 <h3 className="text-xs font-bold text-amber-400 flex items-center gap-2">
                   <Sparkles className="w-4 h-4" /> ISTIQOMAH & FOKUS
                 </h3>
-                <h4 className="text-base font-extrabold text-white">Sabar Adalah Kunci</h4>
+                <h4 className="text-base font-extrabold text-white">Sabar Adalah Kunci Sukses</h4>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Perjalanan bisnis digital butuh proses. Terus upgrade ilmu, ikuti arahan mentor, dan iringi dengan ikhtiar langit.
+                  Perjalanan bisnis digital butuh proses. Terus upgrade ilmu, ikuti arahan mentor, dan iringi dengan ikhtiar terbaik.
                 </p>
               </div>
             )}
 
             {bottomNav === 'materi' && (
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+              <div className="grid grid-cols-2 gap-3 animate-fadeIn">
+                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-lg">
                   <FileText className="w-6 h-6 text-cyan-400 mb-2" />
                   <h4 className="text-xs font-bold text-slate-200">Panduan Mulai</h4>
                   <p className="text-[10px] text-slate-400 mt-1">Modul e-learning lengkap</p>
                 </div>
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-lg">
                   <TrendingUp className="w-6 h-6 text-rose-400 mb-2" />
                   <h4 className="text-xs font-bold text-slate-200">Tips Promosi</h4>
                   <p className="text-[10px] text-slate-400 mt-1">Aset promosi siap pakai</p>
@@ -298,6 +395,7 @@ export default function Home() {
 
             {bottomNav === 'produk' && (
               <>
+                {/* Stats Bar Dinamis */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
                     <div>
@@ -319,6 +417,7 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Search & Filter Kategori */}
                 <div className="space-y-3">
                   <div className="relative">
                     <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -338,7 +437,7 @@ export default function Home() {
                         onClick={() => setSelectedCategory(cat)}
                         className={`px-3.5 py-1.5 rounded-xl whitespace-nowrap border transition-all ${
                           selectedCategory === cat 
-                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold border-cyan-400' 
+                            ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold border-cyan-400 shadow-lg shadow-cyan-500/20' 
                             : 'bg-slate-900/60 text-slate-400 border-slate-800 hover:text-white'
                         }`}
                       >
@@ -348,11 +447,12 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Grid Produk 3 Kolom (Dinamis dari Data Edit) */}
                 <div className="grid grid-cols-3 gap-2.5">
                   {filteredProducts.map((p) => (
                     <div 
                       key={p.id}
-                      className="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-2.5 flex flex-col justify-between relative shadow-lg"
+                      className="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-2.5 flex flex-col justify-between relative shadow-lg group hover:border-slate-700 transition-all"
                     >
                       {p.badge && (
                         <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-rose-500/20 text-rose-400 border border-rose-500/30">
@@ -369,7 +469,7 @@ export default function Home() {
                         href={p.url || '#'}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-3 w-full py-1.5 rounded-xl bg-slate-800 text-emerald-400 text-[10px] font-bold text-center block border border-slate-700"
+                        className="mt-3 w-full py-1.5 rounded-xl bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-emerald-400 text-[10px] font-bold text-center block border border-slate-700 transition-all"
                       >
                         LIHAT
                       </a>
@@ -379,16 +479,17 @@ export default function Home() {
               </>
             )}
 
+            {/* WhatsApp CTA */}
             <div className="bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between shadow-xl">
               <div>
-                <p class="text-xs font-bold text-emerald-400">Punya Pertanyaan?</p>
-                <p class="text-[10px] text-slate-400">Chat langsung via WhatsApp</p>
+                <p className="text-xs font-bold text-emerald-400">Punya Pertanyaan?</p>
+                <p className="text-[10px] text-slate-400">Chat langsung via WhatsApp</p>
               </div>
               <a 
                 href={`https://wa.me/${storeData.whatsapp}`}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20"
               >
                 <MessageCircle className="w-4 h-4" /> Hubungi
               </a>
@@ -401,21 +502,21 @@ export default function Home() {
       <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 max-w-xs w-[90%] bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-full px-4 py-2 flex items-center justify-around shadow-2xl z-50 text-xs">
         <button 
           onClick={() => { setBottomNav('baca'); setActiveTab('preview'); }}
-          className={`flex flex-col items-center gap-1 ${bottomNav === 'baca' && activeTab === 'preview' ? 'text-cyan-400' : 'text-slate-400'}`}
+          className={`flex flex-col items-center gap-1 transition-all ${bottomNav === 'baca' && activeTab === 'preview' ? 'text-cyan-400 scale-105' : 'text-slate-400 hover:text-white'}`}
         >
           <BookOpen className="w-4 h-4" />
           <span className="text-[10px]">Baca Dulu</span>
         </button>
         <button 
           onClick={() => { setBottomNav('materi'); setActiveTab('preview'); }}
-          className={`flex flex-col items-center gap-1 ${bottomNav === 'materi' && activeTab === 'preview' ? 'text-cyan-400' : 'text-slate-400'}`}
+          className={`flex flex-col items-center gap-1 transition-all ${bottomNav === 'materi' && activeTab === 'preview' ? 'text-cyan-400 scale-105' : 'text-slate-400 hover:text-white'}`}
         >
           <FileText className="w-4 h-4" />
           <span className="text-[10px]">Materi</span>
         </button>
         <button 
           onClick={() => { setBottomNav('produk'); setActiveTab('preview'); }}
-          className={`flex flex-col items-center gap-1 ${bottomNav === 'produk' && activeTab === 'preview' ? 'text-cyan-400' : 'text-slate-400'}`}
+          className={`flex flex-col items-center gap-1 transition-all ${bottomNav === 'produk' && activeTab === 'preview' ? 'text-cyan-400 scale-105' : 'text-slate-400 hover:text-white'}`}
         >
           <ShoppingBag className="w-4 h-4" />
           <span className="text-[10px]">Produk</span>
