@@ -86,15 +86,17 @@ export default function Home() {
   const handleSaveData = async () => {
     setIsSaving(true);
     try {
-      await setDoc(doc(db, 'katalog_config', 'main_store'), {
+      const docRef = doc(db, 'katalog_config', 'main_store');
+      await setDoc(docRef, {
         storeData,
         products
-      });
-      alert('✅ Semua pengaturan berhasil disimpan permanen!');
+      }, { merge: true });
+      
+      alert('✅ Semua pengaturan berhasil disimpan ke Cloud Firebase!');
       setActiveTab('preview');
     } catch (err) {
-      console.error("Error menyimpan data:", err);
-      alert('❌ Gagal menyimpan data ke Firebase');
+      console.error("Error Detail Firebase:", err);
+      alert(`❌ Gagal menyimpan data: ${err.message || 'Cek izin Firestore Rules'}`);
     } finally {
       setIsSaving(false);
     }
@@ -183,11 +185,11 @@ export default function Home() {
       {/* Main Container */}
       <main className="max-w-md mx-auto w-full px-4 pt-4 flex-1">
         
-        {/* ================= PANEL EDIT (KENDALI SEMUA MENU) ================= */}
+        {/* ================= PANEL EDIT ================= */}
         {activeTab === 'edit' && (
           <div className="space-y-4 pb-12">
             
-            {/* 1. Identitas & Foto Profil Toko */}
+            {/* 1. Identitas & Foto Profil */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                 <Store className="w-4 h-4" /> 1. Identitas & Foto Profil Toko
@@ -203,7 +205,7 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <label className="text-slate-400">Foto Profil / Logo (Upload dari HP atau Komputer)</label>
+                  <label className="text-slate-400">Foto Profil / Logo (Upload dari HP / Komputer)</label>
                   <div className="flex items-center gap-3 mt-1">
                     <label className="cursor-pointer bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all">
                       <Upload className="w-4 h-4" /> Pilih File Gambar
@@ -368,7 +370,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 5. Kustomisasi Menu 3: Produk (Tambah & Hapus) */}
+            {/* 5. Kustomisasi Menu 3: Produk */}
             <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 backdrop-blur-md shadow-xl space-y-3">
               <h2 className="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4" /> 5. Edit Menu "Produk" (Katalog)
@@ -464,7 +466,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* ================= PANEL PREVIEW (HALAMAN UTAMA DINAMIS) ================= */}
+        {/* ================= PANEL PREVIEW ================= */}
         {activeTab === 'preview' && (
           <div className="space-y-4">
             {/* Header Profil Toko */}
@@ -616,7 +618,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* Floating Bottom Navigation Bar (Fungsi Klik Menu Berjalan Normal) */}
+      {/* Floating Bottom Navigation Bar */}
       <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 max-w-xs w-[90%] bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-full px-4 py-2 flex items-center justify-around shadow-2xl z-50 text-xs">
         <button 
           onClick={() => { setBottomNav('baca'); setActiveTab('preview'); }}
